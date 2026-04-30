@@ -80,6 +80,18 @@ h1, h2, h3, h4 {
 """, unsafe_allow_html=True)
 
 # =========================
+# 📌 Sidebar
+# =========================
+st.sidebar.title("📊 Sales Dashboard")
+st.sidebar.subheader("🤖 Ask Your Data")
+
+user_question = st.sidebar.text_input("Ask a question about sales")
+uploaded_file = st.sidebar.file_uploader(
+    "Upload CSV File",
+    type=["csv"]
+)
+
+# =========================
 # 📂 Empty State
 # =========================
 if not uploaded_file:
@@ -420,5 +432,32 @@ else:
         file_name="filtered_sales_data.csv",
         mime="text/csv"
     )
+# =========================
+# 🤖 Simple Data Chat
+# =========================
 
+if user_question:
 
+    sample_data = filtered_df.head(30).to_string(index=False)
+
+    prompt = f"""
+أنت محلل بيانات محترف.
+
+هذه بيانات المبيعات:
+{sample_data}
+
+السؤال:
+{user_question}
+
+جاوب بشكل بسيط وواضح بالعربي.
+"""
+
+    try:
+        response = ai_model.generate_content(prompt)
+
+        st.success("🤖 Gemini AI Answer")
+        st.write(response.text)
+
+    except Exception as e:
+        st.error(f"❌ AI Error: {e}")
+response = ai_model.generate_content(prompt)
