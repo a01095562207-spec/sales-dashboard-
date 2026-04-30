@@ -228,58 +228,12 @@ else:
         "🏆 Top Product",
         top_product
     )
-        st.markdown("<br>", unsafe_allow_html=True)
 
-    # =========================
-    # 🤖 AI Insights
-    # =========================
-
-    st.subheader("🤖 AI Insights")
-
-    top_product = (
-        filtered_df.groupby("Product")["Sales"]
-        .sum()
-        .idxmax()
-    )
-
-    top_sales = (
-        filtered_df.groupby("Product")["Sales"]
-        .sum()
-        .max()
-    )
-
-    best_day = (
-        filtered_df.groupby("Date")["Sales"]
-        .sum()
-        .idxmax()
-    )
-
-    best_day_sales = (
-        filtered_df.groupby("Date")["Sales"]
-        .sum()
-        .max()
-    )
-
-    avg_sales = filtered_df["Sales"].mean()
-
-    st.success(
-        f"""
-🔥 Top Product: {top_product}
-
-💰 Total Sales for {top_product}: ${top_sales:,.0f}
-
-📅 Best Sales Day: {best_day.date()}
-
-🚀 Sales on Best Day: ${best_day_sales:,.0f}
-
-📊 Average Sale Value: ${avg_sales:,.0f}
-"""
-    )
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # =========================
     # 📊 Charts Row 1
     # =========================
-
     chart1, chart2 = st.columns(2)
 
     with chart1:
@@ -337,7 +291,6 @@ else:
     # =========================
     # 🥧 Pie Chart
     # =========================
-
     st.subheader("🥧 Sales Distribution")
 
     fig3 = px.pie(
@@ -360,7 +313,6 @@ else:
     # =========================
     # 📋 Data Preview
     # =========================
-
     st.subheader("📄 Data Preview")
 
     st.dataframe(
@@ -372,7 +324,6 @@ else:
     # =========================
     # 📥 Download CSV
     # =========================
-
     csv = filtered_df.to_csv(index=False)
 
     st.download_button(
@@ -381,5 +332,3 @@ else:
         file_name="filtered_sales_data.csv",
         mime="text/csv"
     )
-
-   يسسيسيس
