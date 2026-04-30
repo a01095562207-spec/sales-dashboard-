@@ -431,27 +431,4 @@ else:
 # 🤖 Simple Data Chat
 # =========================
 
-if user_question:
 
-    sample_data = filtered_df.head(30).to_string(index=False)
-
-    prompt = f"""
-أنت محلل بيانات محترف.
-
-هذه بيانات المبيعات:
-{sample_data}
-
-السؤال:
-{user_question}
-
-جاوب بشكل بسيط وواضح بالعربي.
-"""
-
-    try:
-        response = ai_model.generate_content(prompt)
-
-        st.success("🤖 Gemini AI Answer")
-        st.write(response.text)
-
-    except Exception as e:
-        st.error(f"❌ AI Error: {e}")
