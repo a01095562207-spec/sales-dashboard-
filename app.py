@@ -41,13 +41,25 @@ h1, h2, h3 {
 
 # 📌 Sidebar
 st.sidebar.title("📊 Sales Dashboard")
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
-    # 🧠 نحول التاريخ
+# 🧠 لو مفيش ملف
+if not uploaded_file:
+    st.markdown("""
+    <div style='text-align:center; padding:80px; color:#94a3b8'>
+        <h2>📂 Upload your CSV file to start</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+else:
+    # ⏳ Loading
+    with st.spinner("Loading data..."):
+        df = pd.read_csv(uploaded_file)
+
+    # 🧠 تحويل التاريخ
     df["Date"] = pd.to_datetime(df["Date"])
 
-    # 🔎 فلترة المنتجات
+    # 🔎 Filters
     st.sidebar.subheader("🔎 Filters")
 
     products = df["Product"].unique()
@@ -67,36 +79,39 @@ if uploaded_file:
             (df["Date"] >= pd.to_datetime(date_range[0])) &
             (df["Date"] <= pd.to_datetime(date_range[1]))
         ]
-# 🧠 لو مفيش ملف
-if not uploaded_file:
-    st.markdown("""
-    <div style='text-align:center; padding:80px; color:#94a3b8'>
-        <h2>📂 Upload your CSV file to start</h2>
-    </div>
-    """, unsafe_allow_html=True)
 
-else:
-
+    # 📈 العنوان
     st.title("📈 Sales Dashboard")
 
-    # 🧮 Metrics
+    # 💎 KPIs
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("💰 Total Sales", df["Sales"].sum())
+    col1.metric("💰 Total Sales", f"${df['Sales'].sum():,.0f}")
     col2.metric("📦 Orders", len(df))
-    col3.metric("📊 Avg Sales", round(df["Sales"].mean(), 2))
+    col3.metric("📊 Avg Sale", f"${df['Sales'].mean():,.0f}")
 
     # 📊 Charts
     col4, col5 = st.columns(2)
 
     with col4:
         fig = px.line(df, x="Date", y="Sales", title="Sales Over Time")
+        fig.update_layout(template="plotly_dark")
         st.plotly_chart(fig, use_container_width=True)
 
     with col5:
         fig2 = px.bar(df, x="Product", y="Sales", title="Sales by Product")
+        fig2.update_layout(template="plotly_dark")
         st.plotly_chart(fig2, use_container_width=True)
 
-    # 📋 Table
+    # 🥧 Pie Chart
+    st.subheader("📊 Sales Distribution")
+    fig3 = px.pie(df, names="Product", values="Sales")
+    fig3.update_layout(template="plotly_dark")
+    st.plotly_chart(fig3, use_container_width=True)
+
+    # 📋 جدول احترافي
     st.subheader("📄 Data Preview")
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(
+        df.style.background_gradient(cmap="Blues"),
+        use_container_width=True
+    )
