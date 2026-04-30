@@ -3,7 +3,10 @@ import pandas as pd
 import plotly.express as px
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import os
+from openai import OpenAI
 
+client = OpenAI(api_key="PUT_YOUR_API_KEY_HERE")
 # =========================
 # 🚀 Page Config
 # =========================
@@ -433,71 +436,34 @@ else:
 
 if user_question:
 
-    q = user_question.strip().lower()
+    # 📊 نحول جزء من الداتا لنص
+    sample_data = filtered_df.head(20).to_string(index=False)
 
-    # =========================
-    # 🏆 أفضل منتج
-    # =========================
-    if (
-        "اكتر" in q or
-        "افضل" in q or
-        "الأكثر" in q or
-        "اعلى" in q or
-        "best" in q or
-        "top" in q
-    ) and (
-        "منتج" in q or "product" in q
-    ):
+    prompt = f"""
+أنت محلل بيانات محترف.
 
-        answer = filtered_df.groupby("Product")["Sales"].sum().idxmax()
-        st.success(f"🏆 أكتر منتج مبيعًا: {answer}")
+هذه بيانات المبيعات:
+{sample_data}
 
-    # =========================
-    # 💰 إجمالي المبيعات
-    # =========================
-    elif (
-        "اجمالي" in q or
-        "مجموع" in q or
-        "كل" in q or
-        "total" in q
-    ) and (
-        "مبيعات" in q or "sales" in q
-    ):
+السؤال:
+{user_question}
 
-        total = filtered_df["Sales"].sum()
-        st.success(f"💰 إجمالي المبيعات: ${total:,.0f}")
+جاوب بشكل بسيط وواضح وبالعربي.
+"""
 
-    # =========================
-    # 📊 متوسط المبيعات
-    # =========================
-    elif (
-        "متوسط" in q or
-        "average" in q
-    ):
-
-        avg = filtered_df["Sales"].mean()
-        st.success(f"📊 متوسط المبيعات: ${avg:,.0f}")
-
-    # =========================
-    # 📦 عدد الطلبات
-    # =========================
-    elif (
-        "عدد" in q or
-        "طلبات" in q or
-        "orders" in q
-    ):
-
-        orders = len(filtered_df)
-        st.success(f"📦 عدد الطلبات: {orders}")
-
-    # =========================
-    # ❌ مش مفهوم
-    # =========================
-    else:
-        st.warning(
-            "🤔 مش فاهم السؤال كويس، جرب:\n"
-            "- ايه اكتر منتج مبيعًا؟\n"
-            "- اجمالي المبيعات كام؟\n"
-            "- متوسط المبيعات؟\n"
-            "- عدد الطلبات؟"
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "أنت محلل بيانات محترف."},
+                {"role": "user", "content": prompt}
+            ]
         )
+
+        answer = response.choices[0].message.content
+
+        st.success("🤖 AI Answer")
+        st.write(answer)
+
+    except Exception as e:
+        st.error(f"❌ AI Error: {e}")
