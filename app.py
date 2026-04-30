@@ -8,7 +8,7 @@ import os
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+ai_model = genai.GenerativeModel("gemini-1.5-flash")
 # =========================
 # 🚀 Page Config
 # =========================
@@ -460,3 +460,4 @@ if user_question:
 
     except Exception as e:
         st.error(f"❌ AI Error: {e}")
+response = ai_model.generate_content(prompt)
