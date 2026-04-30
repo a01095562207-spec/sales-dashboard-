@@ -438,8 +438,7 @@ else:
 
 if user_question:
 
-    # 📊 نحول جزء من الداتا لنص
-    sample_data = filtered_df.head(20).to_string(index=False)
+    sample_data = filtered_df.head(30).to_string(index=False)
 
     prompt = f"""
 أنت محلل بيانات محترف.
@@ -454,18 +453,10 @@ if user_question:
 """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "أنت محلل بيانات محترف."},
-                {"role": "user", "content": prompt}
-            ]
-        )
+        response = model.generate_content(prompt)
 
-        answer = response.choices[0].message.content
-
-        st.success("🤖 AI Answer")
-        st.write(answer)
+        st.success("🤖 Gemini AI Answer")
+        st.write(response.text)
 
     except Exception as e:
         st.error(f"❌ AI Error: {e}")
