@@ -16,18 +16,18 @@ ai_model = genai.GenerativeModel("gemini-1.5-flash")
 # 🚀 Page Config
 # =========================
 st.set_page_config(
-    page_title="Advanced Sales Dashboard",
+    page_title="Sales Dashboard",
     page_icon="📊",
     layout="wide"
 )
 
 # =========================
-# 🎨 CSS
+# 🎨 Simple UI Style
 # =========================
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(to bottom right, #0f172a, #111827);
+    background-color: #0f172a;
     color: white;
 }
 
@@ -37,14 +37,11 @@ h1, h2, h3 {
     color: #f8fafc;
 }
 
-[data-testid="stSidebar"] {
-    background-color: #111827;
-}
-
 [data-testid="stMetric"] {
-    background: rgba(30, 41, 59, 0.85);
-    padding: 20px;
-    border-radius: 18px;
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -61,7 +58,7 @@ user_question = st.sidebar.text_input("🤖 اسأل الداتا")
 # 📂 Empty State
 # =========================
 if not uploaded_file:
-    st.title("📊 Advanced Sales Dashboard")
+    st.title("📊 Sales Dashboard")
     st.info("ارفع ملف CSV للبدء 🚀")
 
 else:
@@ -85,7 +82,7 @@ else:
     df = df.dropna()
 
     # =========================
-    # 🔎 Filters
+    # 🔎 Filter
     # =========================
     products = df["Product"].unique()
 
@@ -100,7 +97,7 @@ else:
     # =========================
     # 📊 Title
     # =========================
-    st.title("📈 Advanced Sales Dashboard")
+    st.title("📈 Sales Dashboard")
 
     # =========================
     # 💎 KPIs
@@ -114,25 +111,55 @@ else:
                 filtered_df.groupby("Product")["Sales"].sum().idxmax())
 
     # =========================
-    # 📊 Charts
+    # 📊 CHARTS (Simple Style)
     # =========================
+    st.subheader("📊 Charts")
+
     chart1, chart2 = st.columns(2)
 
     sales_time = filtered_df.groupby("Date")["Sales"].sum().reset_index()
 
     with chart1:
-        fig = px.line(sales_time, x="Date", y="Sales", title="Sales Over Time")
+        fig = px.line(
+            sales_time,
+            x="Date",
+            y="Sales",
+            title="📈 Sales Over Time",
+            markers=True
+        )
         fig.update_layout(template="plotly_dark")
         st.plotly_chart(fig, use_container_width=True)
 
     with chart2:
         prod_sales = filtered_df.groupby("Product")["Sales"].sum().reset_index()
-        fig2 = px.bar(prod_sales, x="Product", y="Sales", title="By Product")
+
+        fig2 = px.bar(
+            prod_sales,
+            x="Product",
+            y="Sales",
+            title="📦 Sales by Product",
+            text_auto=True
+        )
         fig2.update_layout(template="plotly_dark")
         st.plotly_chart(fig2, use_container_width=True)
 
     # =========================
-    # 🔮 Forecast
+    # 🥧 PIE CHART
+    # =========================
+    st.subheader("🥧 Sales Distribution")
+
+    fig3 = px.pie(
+        prod_sales,
+        names="Product",
+        values="Sales",
+        hole=0.4
+    )
+
+    fig3.update_layout(template="plotly_dark")
+    st.plotly_chart(fig3, use_container_width=True)
+
+    # =========================
+    # 🔮 FORECAST
     # =========================
     st.subheader("📈 AI Forecast")
 
@@ -148,21 +175,29 @@ else:
     future_days = np.arange(len(forecast_df), len(forecast_df)+7).reshape(-1,1)
     preds = model.predict(future_days)
 
-    future_dates = pd.date_range(start=forecast_df["Date"].max(), periods=8)[1:]
+    future_dates = pd.date_range(
+        start=forecast_df["Date"].max(),
+        periods=8
+    )[1:]
 
     future_df = pd.DataFrame({
         "Date": future_dates,
         "Predicted Sales": preds
     })
 
-    fig3 = px.line(future_df, x="Date", y="Predicted Sales",
-                   title="Next 7 Days Prediction")
+    fig4 = px.line(
+        future_df,
+        x="Date",
+        y="Predicted Sales",
+        title="🔮 Next 7 Days Forecast",
+        markers=True
+    )
 
-    fig3.update_layout(template="plotly_dark")
-    st.plotly_chart(fig3, use_container_width=True)
+    fig4.update_layout(template="plotly_dark")
+    st.plotly_chart(fig4, use_container_width=True)
 
     # =========================
-    # 🤖 AI CHAT (FIXED)
+    # 🤖 AI CHAT (Gemini)
     # =========================
     if user_question:
 
@@ -190,7 +225,7 @@ else:
             st.error(f"❌ AI Error: {e}")
 
     # =========================
-    # 📄 Data Preview
+    # 📄 DATA
     # =========================
     st.subheader("📄 Data Preview")
     st.dataframe(filtered_df, use_container_width=True)
