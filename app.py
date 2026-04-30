@@ -78,7 +78,9 @@ h1, h2, h3, h4 {
 # 📌 Sidebar
 # =========================
 st.sidebar.title("📊 Sales Dashboard")
+st.sidebar.subheader("🤖 Ask Your Data")
 
+user_question = st.sidebar.text_input("Ask a question about sales")
 uploaded_file = st.sidebar.file_uploader(
     "Upload CSV File",
     type=["csv"]
@@ -425,3 +427,33 @@ else:
         file_name="filtered_sales_data.csv",
         mime="text/csv"
     )
+# =========================
+# 🤖 Simple Data Chat
+# =========================
+
+if user_question:
+
+    question = user_question.lower()
+
+    if "top" in question or "best product" in question:
+        answer = filtered_df.groupby("Product")["Sales"].sum().idxmax()
+
+        st.info(f"🏆 Top Product: {answer}")
+
+    elif "total" in question:
+        total = filtered_df["Sales"].sum()
+
+        st.info(f"💰 Total Sales: ${total:,.0f}")
+
+    elif "average" in question:
+        avg = filtered_df["Sales"].mean()
+
+        st.info(f"📊 Average Sales: ${avg:,.0f}")
+
+    elif "orders" in question:
+        orders = len(filtered_df)
+
+        st.info(f"📦 Total Orders: {orders}")
+
+    else:
+        st.warning("❌ Try: top product / total sales / average / orders")
