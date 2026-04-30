@@ -41,8 +41,32 @@ h1, h2, h3 {
 
 # 📌 Sidebar
 st.sidebar.title("📊 Sales Dashboard")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
 
+    # 🧠 نحول التاريخ
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    # 🔎 فلترة المنتجات
+    st.sidebar.subheader("🔎 Filters")
+
+    products = df["Product"].unique()
+    selected_product = st.sidebar.multiselect(
+        "Select Product",
+        products,
+        default=products
+    )
+
+    df = df[df["Product"].isin(selected_product)]
+
+    # 📅 فلترة التاريخ
+    date_range = st.sidebar.date_input("Select Date Range", [])
+
+    if len(date_range) == 2:
+        df = df[
+            (df["Date"] >= pd.to_datetime(date_range[0])) &
+            (df["Date"] <= pd.to_datetime(date_range[1]))
+        ]
 # 🧠 لو مفيش ملف
 if not uploaded_file:
     st.markdown("""
@@ -52,7 +76,6 @@ if not uploaded_file:
     """, unsafe_allow_html=True)
 
 else:
-    df = pd.read_csv(uploaded_file)
 
     st.title("📈 Sales Dashboard")
 
