@@ -3,12 +3,7 @@ import pandas as pd
 import plotly.express as px
 from sklearn.linear_model import LinearRegression
 import numpy as np
-import google.generativeai as genai
-import os
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-ai_model = genai.GenerativeModel("gemini-1.5-flash")
 # =========================
 # 🚀 Page Config
 # =========================
@@ -460,4 +455,3 @@ if user_question:
 
     except Exception as e:
         st.error(f"❌ AI Error: {e}")
-response = ai_model.generate_content(prompt)
