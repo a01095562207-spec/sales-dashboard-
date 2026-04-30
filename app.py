@@ -342,7 +342,67 @@ else:
         fig3,
         use_container_width=True
     )
+    # =========================
+    # 🤖 Sales Forecast
+    # =========================
 
+    st.subheader("📈 AI Sales Forecast")
+
+    # تجهيز البيانات
+    forecast_df = (
+        filtered_df.groupby("Date")["Sales"]
+        .sum()
+        .reset_index()
+    )
+
+    # تحويل التاريخ لأرقام
+    forecast_df["Days"] = np.arange(len(forecast_df))
+
+    X = forecast_df[["Days"]]
+    y = forecast_df["Sales"]
+
+    # تدريب الموديل
+    model = LinearRegression()
+    model.fit(X, y)
+
+    # توقع 7 أيام جاية
+    future_days = np.arange(
+        len(forecast_df),
+        len(forecast_df) + 7
+    ).reshape(-1, 1)
+
+    predictions = model.predict(future_days)
+
+    # تجهيز الداتا الجديدة
+    future_dates = pd.date_range(
+        start=forecast_df["Date"].max(),
+        periods=8,
+        freq="D"
+    )[1:]
+
+    future_df = pd.DataFrame({
+        "Date": future_dates,
+        "Predicted Sales": predictions
+    })
+
+    # رسم التوقعات
+    fig4 = px.line(
+        future_df,
+        x="Date",
+        y="Predicted Sales",
+        title="🔮 Next 7 Days Sales Prediction",
+        markers=True
+    )
+
+    fig4.update_layout(
+        template="plotly_dark",
+        height=500
+    )
+
+    st.plotly_chart(
+        fig4,
+        use_container_width=True
+    )
     # =========================
     # 📋 Data Preview
     # =========================
