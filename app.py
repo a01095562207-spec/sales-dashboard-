@@ -433,27 +433,32 @@ else:
 
 if user_question:
 
-    question = user_question.lower()
+    question = user_question.strip()
 
-    if "top" in question or "best product" in question:
+    # 🔥 Top Product
+    if "top" in question or "best" in question or "اكتر" in question or "افضل" in question:
+
         answer = filtered_df.groupby("Product")["Sales"].sum().idxmax()
+        st.info(f"🏆 أكتر منتج مبيعًا: {answer}")
 
-        st.info(f"🏆 Top Product: {answer}")
+    # 💰 Total Sales
+    elif "total" in question or "اجمالي" in question or "مبيعات" in question:
 
-    elif "total" in question:
         total = filtered_df["Sales"].sum()
+        st.info(f"💰 إجمالي المبيعات: ${total:,.0f}")
 
-        st.info(f"💰 Total Sales: ${total:,.0f}")
+    # 📊 Average
+    elif "average" in question or "متوسط" in question:
 
-    elif "average" in question:
         avg = filtered_df["Sales"].mean()
+        st.info(f"📊 متوسط المبيعات: ${avg:,.0f}")
 
-        st.info(f"📊 Average Sales: ${avg:,.0f}")
+    # 📦 Orders
+    elif "orders" in question or "طلبات" in question:
 
-    elif "orders" in question:
         orders = len(filtered_df)
-
-        st.info(f"📦 Total Orders: {orders}")
+        st.info(f"📦 عدد الطلبات: {orders}")
 
     else:
+        st.warning("❌ اسأل حاجة زي: أكتر منتج / إجمالي المبيعات / متوسط / عدد الطلبات")
         st.warning("❌ Try: top product / total sales / average / orders")
