@@ -449,11 +449,11 @@ if user_question:
 السؤال:
 {user_question}
 
-جاوب بشكل بسيط وواضح وبالعربي.
+جاوب بشكل بسيط وواضح بالعربي.
 """
 
     try:
-        response = model.generate_content(prompt)
+        response = ai_model.generate_content(prompt)
 
         st.success("🤖 Gemini AI Answer")
         st.write(response.text)
