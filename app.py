@@ -80,18 +80,6 @@ h1, h2, h3, h4 {
 """, unsafe_allow_html=True)
 
 # =========================
-# 📌 Sidebar
-# =========================
-st.sidebar.title("📊 Sales Dashboard")
-st.sidebar.subheader("🤖 Ask Your Data")
-
-user_question = st.sidebar.text_input("Ask a question about sales")
-uploaded_file = st.sidebar.file_uploader(
-    "Upload CSV File",
-    type=["csv"]
-)
-
-# =========================
 # 📂 Empty State
 # =========================
 if not uploaded_file:
