@@ -230,7 +230,51 @@ else:
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
+# =========================
+# 🤖 AI Insights
+# =========================
 
+st.subheader("🤖 AI Insights")
+
+top_product = (
+    filtered_df.groupby("Product")["Sales"]
+    .sum()
+    .idxmax()
+)
+
+top_sales = (
+    filtered_df.groupby("Product")["Sales"]
+    .sum()
+    .max()
+)
+
+best_day = (
+    filtered_df.groupby("Date")["Sales"]
+    .sum()
+    .idxmax()
+)
+
+best_day_sales = (
+    filtered_df.groupby("Date")["Sales"]
+    .sum()
+    .max()
+)
+
+avg_sales = filtered_df["Sales"].mean()
+
+st.success(
+    f"""
+🔥 Top Product: {top_product}
+
+💰 Total Sales for {top_product}: ${top_sales:,.0f}
+
+📅 Best Sales Day: {best_day.date()}
+
+🚀 Sales on Best Day: ${best_day_sales:,.0f}
+
+📊 Average Sale Value: ${avg_sales:,.0f}
+"""
+)
     # =========================
     # 📊 Charts Row 1
     # =========================
