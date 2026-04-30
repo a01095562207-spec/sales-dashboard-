@@ -41,7 +41,8 @@ h1, h2, h3 {
 
 # 📌 Sidebar
 st.sidebar.title("📊 Sales Dashboard")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+if uploaded_file:
+    uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
 # 🧠 لو مفيش ملف
 if not uploaded_file:
