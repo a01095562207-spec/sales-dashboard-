@@ -228,42 +228,42 @@ else:
         "🏆 Top Product",
         top_product
     )
+        st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-# =========================
-# 🤖 AI Insights
-# =========================
+    # =========================
+    # 🤖 AI Insights
+    # =========================
 
-st.subheader("🤖 AI Insights")
+    st.subheader("🤖 AI Insights")
 
-top_product = (
-    filtered_df.groupby("Product")["Sales"]
-    .sum()
-    .idxmax()
-)
+    top_product = (
+        filtered_df.groupby("Product")["Sales"]
+        .sum()
+        .idxmax()
+    )
 
-top_sales = (
-    filtered_df.groupby("Product")["Sales"]
-    .sum()
-    .max()
-)
+    top_sales = (
+        filtered_df.groupby("Product")["Sales"]
+        .sum()
+        .max()
+    )
 
-best_day = (
-    filtered_df.groupby("Date")["Sales"]
-    .sum()
-    .idxmax()
-)
+    best_day = (
+        filtered_df.groupby("Date")["Sales"]
+        .sum()
+        .idxmax()
+    )
 
-best_day_sales = (
-    filtered_df.groupby("Date")["Sales"]
-    .sum()
-    .max()
-)
+    best_day_sales = (
+        filtered_df.groupby("Date")["Sales"]
+        .sum()
+        .max()
+    )
 
-avg_sales = filtered_df["Sales"].mean()
+    avg_sales = filtered_df["Sales"].mean()
 
-st.success(
-    f"""
+    st.success(
+        f"""
 🔥 Top Product: {top_product}
 
 💰 Total Sales for {top_product}: ${top_sales:,.0f}
@@ -274,10 +274,12 @@ st.success(
 
 📊 Average Sale Value: ${avg_sales:,.0f}
 """
-)
+    )
+
     # =========================
     # 📊 Charts Row 1
     # =========================
+
     chart1, chart2 = st.columns(2)
 
     with chart1:
@@ -335,6 +337,7 @@ st.success(
     # =========================
     # 🥧 Pie Chart
     # =========================
+
     st.subheader("🥧 Sales Distribution")
 
     fig3 = px.pie(
@@ -357,6 +360,7 @@ st.success(
     # =========================
     # 📋 Data Preview
     # =========================
+
     st.subheader("📄 Data Preview")
 
     st.dataframe(
@@ -368,6 +372,7 @@ st.success(
     # =========================
     # 📥 Download CSV
     # =========================
+
     csv = filtered_df.to_csv(index=False)
 
     st.download_button(
@@ -376,3 +381,5 @@ st.success(
         file_name="filtered_sales_data.csv",
         mime="text/csv"
     )
+
+   يسسيسيس
