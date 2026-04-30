@@ -22,24 +22,20 @@ st.markdown("""
     color: white;
 }
 
-/* Hide Streamlit Menu */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-/* Titles */
 h1, h2, h3, h4 {
     color: #f8fafc;
     font-weight: 700;
 }
 
-/* Sidebar */
 [data-testid="stSidebar"] {
     background-color: #111827;
     border-right: 1px solid #1e293b;
 }
 
-/* Metric Cards */
 [data-testid="stMetric"] {
     background: rgba(30, 41, 59, 0.85);
     border: 1px solid #334155;
@@ -49,7 +45,6 @@ h1, h2, h3, h4 {
     box-shadow: 0px 4px 15px rgba(0,0,0,0.25);
 }
 
-/* File uploader */
 [data-testid="stFileUploader"] {
     background: rgba(30, 41, 59, 0.85);
     border: 2px dashed #38bdf8;
@@ -57,13 +52,6 @@ h1, h2, h3, h4 {
     border-radius: 18px;
 }
 
-/* Dataframe */
-[data-testid="stDataFrame"] {
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-/* Buttons */
 .stButton>button {
     background: linear-gradient(135deg, #38bdf8, #6366f1);
     color: white;
@@ -71,15 +59,8 @@ h1, h2, h3, h4 {
     border-radius: 12px;
     height: 45px;
     font-weight: bold;
-    transition: 0.3s;
 }
 
-.stButton>button:hover {
-    transform: scale(1.03);
-    opacity: 0.9;
-}
-
-/* Success box */
 .custom-box {
     background: rgba(30, 41, 59, 0.85);
     padding: 20px;
@@ -120,12 +101,24 @@ if not uploaded_file:
 # =========================
 else:
 
-    # ⏳ Loading
+    # =========================
+    # ⏳ Load CSV
+    # =========================
     with st.spinner("Loading data..."):
-        df = pd.read_csv(uploaded_file)
+
+        try:
+            df = pd.read_csv(uploaded_file)
+
+            if df.empty:
+                st.error("❌ CSV file is empty.")
+                st.stop()
+
+        except Exception as e:
+            st.error(f"❌ Error reading file: {e}")
+            st.stop()
 
     # =========================
-    # 🧹 Data Cleaning
+    # 🧹 Data Validation
     # =========================
     required_columns = ["Date", "Product", "Sales"]
 
@@ -140,18 +133,17 @@ else:
         )
         st.stop()
 
-    # Convert Date
+    # =========================
+    # 🧠 Data Cleaning
+    # =========================
     df["Date"] = pd.to_datetime(df["Date"])
-
-    # Remove nulls
     df = df.dropna()
 
     # =========================
-    # 🔎 Sidebar Filters
+    # 🔎 Filters
     # =========================
     st.sidebar.subheader("🔎 Filters")
 
-    # Product Filter
     products = sorted(df["Product"].unique())
 
     selected_products = st.sidebar.multiselect(
@@ -160,7 +152,13 @@ else:
         default=products
     )
 
-    # Date Filter
+    filtered_df = df[
+        df["Product"].isin(selected_products)
+    ]
+
+    # =========================
+    # 📅 Date Filter
+    # =========================
     min_date = df["Date"].min()
     max_date = df["Date"].max()
 
@@ -169,12 +167,8 @@ else:
         [min_date, max_date]
     )
 
-    # Apply Filters
-    filtered_df = df[
-        df["Product"].isin(selected_products)
-    ]
-
     if len(selected_dates) == 2:
+
         start_date = pd.to_datetime(selected_dates[0])
         end_date = pd.to_datetime(selected_dates[1])
 
@@ -184,13 +178,13 @@ else:
         ]
 
     # =========================
-    # 📈 Dashboard Title
+    # 📈 Title
     # =========================
     st.title("📈 Advanced Sales Dashboard")
 
     st.markdown("""
     <div class='custom-box'>
-        Analyze your sales performance with interactive charts and KPIs 🚀
+        Analyze your sales performance with AI-powered insights 🚀
     </div>
     """, unsafe_allow_html=True)
 
@@ -232,7 +226,44 @@ else:
     st.markdown("<br>", unsafe_allow_html=True)
 
     # =========================
-    # 📊 Charts Row 1
+    # 🤖 AI Insights
+    # =========================
+    st.subheader("🤖 AI Insights")
+
+    top_sales = (
+        filtered_df.groupby("Product")["Sales"]
+        .sum()
+        .max()
+    )
+
+    best_day = (
+        filtered_df.groupby("Date")["Sales"]
+        .sum()
+        .idxmax()
+    )
+
+    best_day_sales = (
+        filtered_df.groupby("Date")["Sales"]
+        .sum()
+        .max()
+    )
+
+    st.success(
+        f"""
+🔥 Top Product: {top_product}
+
+💰 Total Sales for {top_product}: ${top_sales:,.0f}
+
+📅 Best Sales Day: {best_day.date()}
+
+🚀 Sales on Best Day: ${best_day_sales:,.0f}
+
+📊 Average Sale Value: ${avg_sales:,.0f}
+"""
+    )
+
+    # =========================
+    # 📊 Charts
     # =========================
     chart1, chart2 = st.columns(2)
 
