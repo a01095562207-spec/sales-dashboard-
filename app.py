@@ -433,32 +433,71 @@ else:
 
 if user_question:
 
-    question = user_question.strip()
+    q = user_question.strip().lower()
 
-    # 🔥 Top Product
-    if "top" in question or "best" in question or "اكتر" in question or "افضل" in question:
+    # =========================
+    # 🏆 أفضل منتج
+    # =========================
+    if (
+        "اكتر" in q or
+        "افضل" in q or
+        "الأكثر" in q or
+        "اعلى" in q or
+        "best" in q or
+        "top" in q
+    ) and (
+        "منتج" in q or "product" in q
+    ):
 
         answer = filtered_df.groupby("Product")["Sales"].sum().idxmax()
-        st.info(f"🏆 أكتر منتج مبيعًا: {answer}")
+        st.success(f"🏆 أكتر منتج مبيعًا: {answer}")
 
-    # 💰 Total Sales
-    elif "total" in question or "اجمالي" in question or "مبيعات" in question:
+    # =========================
+    # 💰 إجمالي المبيعات
+    # =========================
+    elif (
+        "اجمالي" in q or
+        "مجموع" in q or
+        "كل" in q or
+        "total" in q
+    ) and (
+        "مبيعات" in q or "sales" in q
+    ):
 
         total = filtered_df["Sales"].sum()
-        st.info(f"💰 إجمالي المبيعات: ${total:,.0f}")
+        st.success(f"💰 إجمالي المبيعات: ${total:,.0f}")
 
-    # 📊 Average
-    elif "average" in question or "متوسط" in question:
+    # =========================
+    # 📊 متوسط المبيعات
+    # =========================
+    elif (
+        "متوسط" in q or
+        "average" in q
+    ):
 
         avg = filtered_df["Sales"].mean()
-        st.info(f"📊 متوسط المبيعات: ${avg:,.0f}")
+        st.success(f"📊 متوسط المبيعات: ${avg:,.0f}")
 
-    # 📦 Orders
-    elif "orders" in question or "طلبات" in question:
+    # =========================
+    # 📦 عدد الطلبات
+    # =========================
+    elif (
+        "عدد" in q or
+        "طلبات" in q or
+        "orders" in q
+    ):
 
         orders = len(filtered_df)
-        st.info(f"📦 عدد الطلبات: {orders}")
+        st.success(f"📦 عدد الطلبات: {orders}")
 
+    # =========================
+    # ❌ مش مفهوم
+    # =========================
     else:
-        st.warning("❌ اسأل حاجة زي: أكتر منتج / إجمالي المبيعات / متوسط / عدد الطلبات")
-        st.warning("❌ Try: top product / total sales / average / orders")
+        st.warning(
+            "🤔 مش فاهم السؤال كويس، جرب:\n"
+            "- ايه اكتر منتج مبيعًا؟\n"
+            "- اجمالي المبيعات كام؟\n"
+            "- متوسط المبيعات؟\n"
+            "- عدد الطلبات؟"
+        )
